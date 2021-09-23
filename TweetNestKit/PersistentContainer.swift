@@ -21,16 +21,28 @@ public class PersistentContainer: NSPersistentCloudKitContainer {
     private static let _managedObjectModel: NSManagedObjectModel = {
         let managedObjectModel = NSManagedObjectModel(contentsOf: Bundle.tweetNestKit.url(forResource: Bundle.tweetNestKit.name!, withExtension: "momd")!)!
 
-        let accountEntity = managedObjectModel.entitiesByName["Account"]
-        let usersFetchedPropertyDescription = accountEntity?.propertiesByName["users"] as? NSFetchedPropertyDescription
-        usersFetchedPropertyDescription?.fetchRequest?.sortDescriptors = [
+        guard let accountEntity = managedObjectModel.entitiesByName["Account"] else {
+            fatalError("Account entity not found.")
+        }
+
+        guard let usersFetchedPropertyDescription = accountEntity.propertiesByName["users"] as? NSFetchedPropertyDescription else {
+            fatalError("users property not found in Account entity.")
+        }
+
+        usersFetchedPropertyDescription.fetchRequest?.sortDescriptors = [
             NSSortDescriptor(keyPath: \User.creationDate, ascending: true),
             NSSortDescriptor(keyPath: \User.modificationDate, ascending: true),
         ]
 
-        let userEntity = managedObjectModel.entitiesByName["User"]
-        let accountsFetchedPropertyDescription = userEntity?.propertiesByName["accounts"] as? NSFetchedPropertyDescription
-        accountsFetchedPropertyDescription?.fetchRequest?.sortDescriptors = [
+        guard let userEntity = managedObjectModel.entitiesByName["User"] else {
+            fatalError("User entity not found.")
+        }
+
+        guard let accountsFetchedPropertyDescription = userEntity.propertiesByName["accounts"] as? NSFetchedPropertyDescription else {
+            fatalError("accounts property not found in User entity.")
+        }
+
+        accountsFetchedPropertyDescription.fetchRequest?.sortDescriptors = [
             NSSortDescriptor(keyPath: \Account.creationDate, ascending: true),
         ]
 
@@ -52,6 +64,12 @@ public class PersistentContainer: NSPersistentCloudKitContainer {
     }
 
     static let accountsPersistentStoreConfiguration = "Accounts"
+
+    class var dataAssetsPersistentStoreURL: URL {
+        Self.defaultDirectoryURL().appendingPathComponent("DataAssets.sqlite")
+    }
+
+    static let dataAssetsPersistentStoreConfiguration = "DataAssets"
 
     public override var viewContext: NSManagedObjectContext {
         let viewContext = super.viewContext
@@ -81,14 +99,6 @@ public class PersistentContainer: NSPersistentCloudKitContainer {
         _ = persistentContainerEventDidChanges
 
         if inMemory == false {
-            let tweetNestKitPersistentStoreDescription = NSPersistentStoreDescription(url: Self.defaultPersistentStoreURL)
-            tweetNestKitPersistentStoreDescription.type = NSSQLiteStoreType
-            tweetNestKitPersistentStoreDescription.configuration = Self.defaultPersistentStoreConfiguration
-            tweetNestKitPersistentStoreDescription.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(containerIdentifier: Session.cloudKitIdentifier)
-            tweetNestKitPersistentStoreDescription.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
-            tweetNestKitPersistentStoreDescription.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
-            tweetNestKitPersistentStoreDescription.shouldAddStoreAsynchronously = true
-
             let accountsPersistentStoreDescription = NSPersistentStoreDescription(url: Self.accountsPersistentStoreURL)
             accountsPersistentStoreDescription.type = NSSQLiteStoreType
             accountsPersistentStoreDescription.configuration = Self.accountsPersistentStoreConfiguration
@@ -96,9 +106,24 @@ public class PersistentContainer: NSPersistentCloudKitContainer {
             accountsPersistentStoreDescription.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
             accountsPersistentStoreDescription.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
 
+            let tweetNestKitPersistentStoreDescription = NSPersistentStoreDescription(url: Self.defaultPersistentStoreURL)
+            tweetNestKitPersistentStoreDescription.type = NSSQLiteStoreType
+            tweetNestKitPersistentStoreDescription.configuration = Self.defaultPersistentStoreConfiguration
+            tweetNestKitPersistentStoreDescription.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(containerIdentifier: Session.cloudKitIdentifier)
+            tweetNestKitPersistentStoreDescription.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+            tweetNestKitPersistentStoreDescription.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
+
+            let dataAssetsPersistentStoreDescription = NSPersistentStoreDescription(url: Self.dataAssetsPersistentStoreURL)
+            dataAssetsPersistentStoreDescription.type = NSSQLiteStoreType
+            dataAssetsPersistentStoreDescription.configuration = Self.dataAssetsPersistentStoreConfiguration
+            dataAssetsPersistentStoreDescription.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(containerIdentifier: Session.dataAssetsCloudKitIdentifier)
+            dataAssetsPersistentStoreDescription.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+            dataAssetsPersistentStoreDescription.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
+
             persistentStoreDescriptions = [
                 accountsPersistentStoreDescription,
                 tweetNestKitPersistentStoreDescription,
+                dataAssetsPersistentStoreDescription,
             ]
 
             #if canImport(CoreSpotlight)
@@ -168,7 +193,7 @@ extension PersistentContainer {
 
         var isMigrated: Bool = false
 
-        if FileManager.default.fileExists(atPath: Self.accountsPersistentStoreURL.path) == false {
+        if FileManager.default.fileExists(atPath: Self.dataAssetsPersistentStoreURL.path) == false {
             // Step 1. Migrate default store with nil configuration
 
             let defaultModelMigrationPersistentContainer = NSPersistentContainer(name: "TweetNestKit", managedObjectModel: persistentStoreCoordinator.managedObjectModel)
@@ -178,19 +203,19 @@ extension PersistentContainer {
 
             defaultModelMigrationPersistentContainer.loadPersistentStores { _, _ in }
 
-            // Step 2. Migrate default store to account store
+            // Step 2. Migrate default store to data assets store
 
-            let accountsStoreMigrationPersistentContainer = NSPersistentContainer(name: "Accounts", managedObjectModel: persistentStoreCoordinator.managedObjectModel)
-            accountsStoreMigrationPersistentContainer.persistentStoreDescriptions[0].type = NSSQLiteStoreType
-            accountsStoreMigrationPersistentContainer.persistentStoreDescriptions[0].configuration = Self.accountsPersistentStoreConfiguration
-            accountsStoreMigrationPersistentContainer.persistentStoreDescriptions[0].url = Self.defaultPersistentStoreURL
-            accountsStoreMigrationPersistentContainer.persistentStoreDescriptions[0].setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
-            accountsStoreMigrationPersistentContainer.persistentStoreDescriptions[0].setOption(true as NSNumber, forKey: NSReadOnlyPersistentStoreOption)
+            let dataAssetsStoreMigrationPersistentContainer = NSPersistentContainer(name: "DataAssets", managedObjectModel: persistentStoreCoordinator.managedObjectModel)
+            dataAssetsStoreMigrationPersistentContainer.persistentStoreDescriptions[0].type = NSSQLiteStoreType
+            dataAssetsStoreMigrationPersistentContainer.persistentStoreDescriptions[0].configuration = Self.dataAssetsPersistentStoreConfiguration
+            dataAssetsStoreMigrationPersistentContainer.persistentStoreDescriptions[0].url = Self.defaultPersistentStoreURL
+            dataAssetsStoreMigrationPersistentContainer.persistentStoreDescriptions[0].setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+            dataAssetsStoreMigrationPersistentContainer.persistentStoreDescriptions[0].setOption(true as NSNumber, forKey: NSReadOnlyPersistentStoreOption)
 
-            accountsStoreMigrationPersistentContainer.loadPersistentStores { _, _ in }
+            dataAssetsStoreMigrationPersistentContainer.loadPersistentStores { _, _ in }
 
-            if let store = accountsStoreMigrationPersistentContainer.persistentStoreCoordinator.persistentStores.first {
-                _ = try accountsStoreMigrationPersistentContainer.persistentStoreCoordinator.migratePersistentStore(store, to: Self.accountsPersistentStoreURL, options: nil, type: .sqlite)
+            if let store = dataAssetsStoreMigrationPersistentContainer.persistentStoreCoordinator.persistentStores.first {
+                _ = try dataAssetsStoreMigrationPersistentContainer.persistentStoreCoordinator.migratePersistentStore(store, to: Self.dataAssetsPersistentStoreURL, options: nil, type: .sqlite)
             }
 
             isMigrated = true

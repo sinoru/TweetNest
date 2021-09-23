@@ -16,6 +16,7 @@ public actor Session {
 
     static let cloudKitIdentifier = "iCloud.\(Bundle.tweetNestKit.bundleIdentifier!)"
     static let accountsCloudKitIdentifier = "iCloud.\(Bundle.tweetNestKit.bundleIdentifier!).accounts"
+    static let dataAssetsCloudKitIdentifier = "iCloud.\(Bundle.tweetNestKit.bundleIdentifier!).dataAssets"
     static let applicationGroupIdentifier = "group.\(Bundle.tweetNestKit.bundleIdentifier!)"
 
     private var _twitterAPIConfiguration: AsyncLazy<TwitterAPIConfiguration>

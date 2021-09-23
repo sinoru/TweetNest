@@ -13,6 +13,20 @@ struct UserDetailProfileView: View {
 
     @Environment(\.openURL) private var openURL
 
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    #endif
+
+    private var shouldCompactForHorizontal: Bool {
+        #if os(iOS)
+        return horizontalSizeClass == .compact
+        #elseif os(watchOS)
+        return true
+        #else
+        return false
+        #endif
+    }
+
     var body: some View {
         Group {
             VStack(alignment: .leading, spacing: 16) {
@@ -101,11 +115,11 @@ struct UserDetailProfileView: View {
                         Spacer()
                         #endif
                         Group {
-                            #if os(watchOS)
-                            Text(userCreationDate.formatted(date: .numeric, time: .shortened))
-                            #else
-                            Text(userCreationDate.formatted(date: .numeric, time: .standard))
-                            #endif
+                            if shouldCompactForHorizontal {
+                                Text(userCreationDate.formatted(date: .numeric, time: .shortened))
+                            } else {
+                                Text(userCreationDate.formatted(date: .numeric, time: .standard))
+                            }
                         }
                         .foregroundColor(.secondary)
                         .lineLimit(1)

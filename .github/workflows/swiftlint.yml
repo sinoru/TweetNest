@@ -17,7 +17,7 @@ jobs:
         with:
           swift-version: '5.4.3'
       - run: swift build --package-path ~/.swiftlint -c release
-      - run: swiftenv install 5.5-DEVELOPMENT-SNAPSHOT-2021-09-09-a
+      - run: swiftenv install 5.5
       - run: |
           set -o pipefail && swift run --package-path ~/.swiftlint -c release --skip-build -- swiftlint | sed -E "s/$(pwd|sed 's/\//\\\//g')\///" | sed -E 's/^(.*):([0-9]+):([0-9]+): (warning|error|[^:]+): (.*)/::\4 file=\1,line=\2,col=\3::\5/'
           # MIT License
@@ -44,4 +44,4 @@ jobs:
           #
           # https://github.com/norio-nomura/action-swiftlint/blob/9f4dcd7fd46b4e75d7935cf2f4df406d5cae3684/entrypoint.sh
         env:
-          SWIFT_VERSION: 5.5-DEVELOPMENT-SNAPSHOT-2021-09-09-a
+          SWIFT_VERSION: '5.5'

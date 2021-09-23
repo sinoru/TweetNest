@@ -38,6 +38,7 @@ struct AccountLabel: View {
                 let fetchRequest = UserDetail.fetchRequest()
                 fetchRequest.predicate = NSPredicate(format: "user.id == %@", account.userID ?? "")
                 fetchRequest.sortDescriptors = [
+                    NSSortDescriptor(keyPath: \UserDetail.user?.modificationDate, ascending: false),
                     NSSortDescriptor(keyPath: \UserDetail.creationDate, ascending: false)
                 ]
                 fetchRequest.fetchLimit = 1

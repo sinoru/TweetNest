@@ -101,6 +101,7 @@ class TweetNestScreenTests: XCTestCase {
         add(attachment)
     }
 
+    #if !os(watchOS)
     func testBatchDeleteTweetsForm() throws {
         // Insert steps here to perform after app launch but before taking a screenshot,
         // such as logging into a test account or navigating somewhere in the app
@@ -141,4 +142,5 @@ class TweetNestScreenTests: XCTestCase {
         let relativeOffset = app.coordinate(withNormalizedOffset: CGVector(dx: 0.0, dy: -1.0))
         relativeTouchPoint.press(forDuration: 0, thenDragTo: relativeOffset)
     }
+    #endif
 }

@@ -23,12 +23,31 @@ struct UsersDiffList: View {
             let previousUserDetailIndex = userDetailIndex.flatMap { $0 + 1 }
             let previousUserDetail = previousUserDetailIndex.flatMap { userDetails.indices.contains($0) ? userDetails[$0] : nil }
 
-            UsersDiffListSection(
-                header: Text(verbatim: userDetail.creationDate?.formatted(date: .abbreviated, time: .standard) ?? userDetail.objectID.description),
-                userIDs: OrderedSet(userDetail[keyPath: diffKeyPath] ?? []),
-                previousUserIDs: OrderedSet(previousUserDetail?[keyPath: diffKeyPath] ?? []),
-                searchQuery: $searchQuery
-            )
+            let userIDs = OrderedSet(userDetail[keyPath: diffKeyPath] ?? [])
+            let previousUserIDs = OrderedSet(previousUserDetail?[keyPath: diffKeyPath] ?? [])
+
+            let appendedUserIDs = userIDs.subtracting(previousUserIDs)
+            let removedUserIDs = previousUserIDs.subtracting(userIDs)
+
+            if appendedUserIDs.isEmpty == false || removedUserIDs.isEmpty == false {
+                Section {
+                    ForEach(appendedUserIDs, id: \.self) { userID in
+                        UserRow(userID: userID, searchQuery: searchQuery) {
+                            Image(systemName: "person.badge.plus")
+                                .foregroundColor(.green)
+                        }
+                    }
+
+                    ForEach(removedUserIDs, id: \.self) { userID in
+                        UserRow(userID: userID, searchQuery: searchQuery) {
+                            Image(systemName: "person.badge.minus")
+                                .foregroundColor(.red)
+                        }
+                    }
+                } header: {
+                    Text(verbatim: userDetail.creationDate?.formatted(date: .abbreviated, time: .standard) ?? userDetail.objectID.description)
+                }
+            }
         }
         .searchable(text: $searchQuery)
     }

@@ -63,16 +63,33 @@ struct SettingsMainView: View {
 
             Section {
                 let marketingVersionString = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-                let versionString = (Bundle.main.infoDictionary?["CFBundleVersion"] as? String).flatMap { String("(\($0))") }
+                let buildVersionString = (Bundle.main.infoDictionary?["CFBundleVersion"] as? String).flatMap({String("(\($0))")})
+                let versionString = [marketingVersionString, buildVersionString].compactMap({$0}).joined(separator: " ")
 
                 TweetNestStack {
                     Text("App Version")
                     #if !os(watchOS)
                     Spacer()
                     #endif
-                    Text(verbatim: [marketingVersionString, versionString].compactMap { $0 }.joined(separator: " "))
-                        .foregroundColor(.secondary)
+                    Text(versionString)
+                    .foregroundColor(.secondary)
                 }
+                #if !os(watchOS)
+                .contextMenu {
+                    Button(
+                        action: {
+                            #if canImport(AppKit)
+                            NSPasteboard.general.setString(versionString, forType: .string)
+                            #elseif canImport(UIKit)
+                            UIPasteboard.general.string = versionString
+                            #endif
+                        },
+                        label: {
+                            Label("Copy", systemImage: "doc.on.doc")
+                        }
+                    )
+                }
+                #endif
             } header: {
                 Text("About")
             }

@@ -32,14 +32,18 @@ struct MainView: View {
             .alert(isPresented: $showErrorAlert, error: error)
             .sheet(item: $user) { user in
                 NavigationView {
-                    UserView(user: user)
-                        .toolbar {
-                            ToolbarItemGroup(placement: .cancellationAction) {
-                                Button("Cancel", role: .cancel) {
-                                    self.user = nil
-                                }
+                    Group {
+                        if let userID = user.id {
+                            UserView(userID: userID)
+                        }
+                    }
+                    .toolbar {
+                        ToolbarItemGroup(placement: .cancellationAction) {
+                            Button("Cancel", role: .cancel) {
+                                self.user = nil
                             }
                         }
+                    }
                 }
             }
             .task {

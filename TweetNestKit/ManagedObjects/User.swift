@@ -33,7 +33,7 @@ public class User: NSManagedObject {
 }
 
 extension User {
-    @NSManaged public var accounts: [Account]? // The accessor of the accounts property.
+    @NSManaged public private(set) var accounts: [Account]? // The accessor of the accounts property.
 }
 
 extension User {

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>%ld new follower(s)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@followers@</string>
+		<key>followers</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>ld</string>
+			<key>other</key>
+			<string>%ld人の新規フォロワー</string>
+			<key>zero</key>
+			<string>0人の新規フォロワー</string>
+		</dict>
+	</dict>
+	<key>%ld new following(s)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@followings@</string>
+		<key>followings</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>ld</string>
+			<key>other</key>
+			<string>%ld人の新規フォロー</string>
+			<key>zero</key>
+			<string>0人の新規フォロー</string>
+		</dict>
+	</dict>
+	<key>%ld new unfollower(s)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@unfollowers@</string>
+		<key>unfollowers</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>ld</string>
+			<key>other</key>
+			<string>%ld人の新規アンフォロワー</string>
+			<key>zero</key>
+			<string>0人の新規アンフォロワー</string>
+		</dict>
+	</dict>
+	<key>%ld new unfollowing(s)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@unfollowings@</string>
+		<key>unfollowings</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>ld</string>
+			<key>other</key>
+			<string>%ld人の新規アンフォロー</string>
+			<key>zero</key>
+			<string>0人の新規アンフォロー</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

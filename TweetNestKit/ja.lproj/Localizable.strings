@@ -1,0 +1,9 @@
+/* background-refresh notification title. */
+"Background Refresh" = "バックグラウンド更新";
+
+/* update-accounts notification subtitle. */
+"Error" = "エラー";
+
+/* background-refresh notification. */
+"New Data Available" = "新しいデータがあります";
+

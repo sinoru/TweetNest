@@ -1,0 +1,111 @@
+/* No comment provided by engineer. */
+"%@ of %@ tweets deletion requested." = "%2$@件のツイート中%1$@件のツイートの削除をリクエストしました。";
+
+/* No comment provided by engineer. */
+"%@ tweets failed to delete." = "%@件のツイートの削除に失敗しました。";
+
+/* No comment provided by engineer. */
+"%@ tweets will be deleted." = "%@件のツイートが削除されます。";
+
+/* No comment provided by engineer. */
+"%@'s Account" = "%@のアカウント";
+
+/* No comment provided by engineer. */
+"%@'s Blocks History" = "%@のブロック履歴";
+
+/* No comment provided by engineer. */
+"%@'s Followers History" = "%@のフォロワー履歴";
+
+/* No comment provided by engineer. */
+"%@'s Followings History" = "%@のフォロー中履歴";
+
+/* No comment provided by engineer. */
+"About" = "情報";
+
+/* No comment provided by engineer. */
+"Account" = "アカウント";
+
+/* No comment provided by engineer. */
+"Accounts" = "アカウント";
+
+/* No comment provided by engineer. */
+"App Version" = "バージョン";
+
+/* No comment provided by engineer. */
+"Blocked Accounts" = "ブロックしたアカウント";
+
+/* No comment provided by engineer. */
+"Blocks History" = "ブロック履歴";
+
+/* No comment provided by engineer. */
+"Cancel" = "キャンセル";
+
+/* No comment provided by engineer. */
+"Delete" = "削除";
+
+/* No comment provided by engineer. */
+"Delete Tweets" = "ツイートを削除";
+
+/* No comment provided by engineer. */
+"Delete Tweets?" = "ツイートを削除しますか？";
+
+/* No comment provided by engineer. */
+"Deleting %@ tweets..." = "%@ツイートを削除しています…";
+
+/* No comment provided by engineer. */
+"Done" = "完了";
+
+/* No comment provided by engineer. */
+"Fetch Blocking Users" = "ブロックしたアカウントの一覧を取得";
+
+/* No comment provided by engineer. */
+"Followers" = "フォロワー";
+
+/* No comment provided by engineer. */
+"Followers History" = "フォロワー履歴";
+
+/* No comment provided by engineer. */
+"Followings" = "フォロー中";
+
+/* No comment provided by engineer. */
+"Followings History" = "フォロー中履歴";
+
+/* No comment provided by engineer. */
+"General" = "一般";
+
+/* No comment provided by engineer. */
+"Joined" = "アカウント作成日";
+
+/* No comment provided by engineer. */
+"Listed" = "リスト";
+
+/* No comment provided by engineer. */
+"Loaded Tweets" = "読み込んだツイート";
+
+/* No comment provided by engineer. */
+"Loading Recent Tweets..." = "最新ツイートを読み込んでいます…";
+
+/* No comment provided by engineer. */
+"Location" = "場所";
+
+/* No comment provided by engineer. */
+"Protected" = "非公開";
+
+/* No comment provided by engineer. */
+"Retweets" = "リツイート";
+
+/* No comment provided by engineer. */
+"Settings" = "設定";
+
+/* No comment provided by engineer. */
+"Target Tweets" = "対象ツイート";
+
+/* No comment provided by engineer. */
+"Tweets" = "ツイート";
+
+/* No comment provided by engineer. */
+"URL" = "Web";
+
+/* No comment provided by engineer. */
+"Verified" = "認証済み";
+

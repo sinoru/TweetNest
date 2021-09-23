@@ -64,9 +64,10 @@ extension Session {
                         try Task.checkCancellation()
 
                         try await withThrowingTaskGroup(of: Void.self) { taskGroup in
-                            taskGroup.addTask { try await updateUserNotifications(transactions: transactions.transactions, context: transactions.context) }
+                            taskGroup.addTask { try await handleUserDetailChanges(transactions: transactions.transactions, context: transactions.context) }
                             taskGroup.addTask { try await handleAccountChanges(transactions: transactions.transactions, context: transactions.context) }
                             taskGroup.addTask { try await handleUserChanges(transactions: transactions.transactions, context: transactions.context) }
+                            taskGroup.addTask { try await handleDataAssetsChanges(transactions: transactions.transactions, context: transactions.context) }
 
                             try await taskGroup.waitForAll()
                         }
@@ -176,8 +177,44 @@ extension Session {
         }
     }
 
-    private nonisolated func updateUserNotifications(transactions: [NSPersistentHistoryTransaction], context: NSManagedObjectContext) async throws {
-        let changesByObjectID: OrderedDictionary<NSManagedObjectID, NSPersistentHistoryChange> = OrderedDictionary(
+    private nonisolated func handleDataAssetsChanges(transactions: [NSPersistentHistoryTransaction], context: NSManagedObjectContext) async throws {
+        let dataAssetChangesByObjectID: OrderedDictionary<NSManagedObjectID, NSPersistentHistoryChange> = OrderedDictionary(
+            Array(
+                transactions
+                    .lazy
+                    .flatMap { $0.changes ?? [] }
+                    .filter { $0.changedObjectID.entity == DataAsset.entity() }
+                    .map { ($0.changedObjectID, $0) }
+            ),
+            uniquingKeysWith: { $1 }
+        )
+
+        for (dataAssetObjectID, change) in dataAssetChangesByObjectID {
+            try Task.checkCancellation()
+
+            func cleansingDataAsset() async {
+                do {
+                    try await self.cleansingDataAsset(for: dataAssetObjectID, context: context)
+                } catch {
+                    logger.error("Error occurred while cleansing data asset: \(String(reflecting: error), privacy: .public)")
+                }
+            }
+
+            switch change.changeType {
+            case .insert:
+                await cleansingDataAsset()
+            case .update:
+                break
+            case .delete:
+                break
+            @unknown default:
+                break
+            }
+        }
+    }
+
+    private nonisolated func handleUserDetailChanges(transactions: [NSPersistentHistoryTransaction], context: NSManagedObjectContext) async throws {
+        let userDetailChangesByObjectID: OrderedDictionary<NSManagedObjectID, NSPersistentHistoryChange> = OrderedDictionary(
             Array(
                 transactions
                     .lazy
@@ -188,7 +225,7 @@ extension Session {
             uniquingKeysWith: { $1 }
         )
 
-        for (userDetailObjectID, change) in changesByObjectID {
+        for (userDetailObjectID, change) in userDetailChangesByObjectID {
             try Task.checkCancellation()
 
             let (threadIdentifier, notificationIdentifier): (String?, String) = await context.perform(schedule: .enqueued) {

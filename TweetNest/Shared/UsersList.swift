@@ -11,58 +11,18 @@ import OrderedCollections
 
 struct UsersList: View {
     let userIDs: OrderedSet<String>
-
-    @FetchRequest private var userDetails: FetchedResults<UserDetail>
-
+    
     @State private var searchQuery: String = ""
 
     var body: some View {
-        let userDetailsByUser = Dictionary<String?, [UserDetail]>(grouping: userDetails, by: { $0.user?.id })
-
         List(userIDs, id: \.self) { userID in
-            userLabel(userID: userID, userDetails: userDetailsByUser[userID] ?? [])
+            UserRow(userID: userID, searchQuery: searchQuery)
         }
         .searchable(text: $searchQuery)
     }
 
     init<C>(userIDs: C) where C: Sequence, C.Element == String {
         self.userIDs = OrderedSet(userIDs)
-
-        let userDetailsFetchRequest = UserDetail.fetchRequest()
-        userDetailsFetchRequest.predicate = NSPredicate(format: "user.id in %@", Array(userIDs))
-        userDetailsFetchRequest.sortDescriptors = [
-            NSSortDescriptor(keyPath: \UserDetail.creationDate, ascending: false),
-        ]
-        userDetailsFetchRequest.propertiesToFetch = ["name", "username", "profileImageURL", "user"]
-        userDetailsFetchRequest.relationshipKeyPathsForPrefetching = ["user"]
-
-        self._userDetails = FetchRequest(
-            fetchRequest: userDetailsFetchRequest
-        )
-    }
-
-    @ViewBuilder
-    private func userLabel(userID: String, userDetails: [UserDetail]) -> some View {
-        let displayUserID = Int64(userID).flatMap { "#\($0.twnk_formatted())" } ?? "#\(userID)"
-
-        if let latestUserDetail = userDetails.first {
-            if
-                searchQuery.isEmpty ||
-                userDetails.contains(where: {
-                    ($0.name?.localizedCaseInsensitiveContains(searchQuery) == true || $0.username?.localizedCaseInsensitiveContains(searchQuery) == true)
-                })
-            {
-                UserLabel(userDetail: latestUserDetail, displayUserID: displayUserID)
-                    #if os(watchOS)
-                    .labelStyle(.titleOnly)
-                    #endif
-                    .accessibilityLabel(Text(verbatim: latestUserDetail.name ?? displayUserID))
-            }
-        } else {
-            if searchQuery.isEmpty || displayUserID.contains(searchQuery) {
-                UserLabel(displayUserID: displayUserID)
-            }
-        }
     }
 }
 

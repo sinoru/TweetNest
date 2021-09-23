@@ -8,6 +8,7 @@
 	<array>
 		<string>iCloud.com.tweetnest.TweetNestKit</string>
 		<string>iCloud.com.tweetnest.TweetNestKit.accounts</string>
+		<string>iCloud.com.tweetnest.TweetNestKit.dataAssets</string>
 	</array>
 	<key>com.apple.developer.icloud-services</key>
 	<array>

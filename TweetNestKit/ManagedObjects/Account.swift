@@ -14,7 +14,7 @@ public class Account: NSManagedObject {
 }
 
 extension Account {
-    @NSManaged public var users: [User]?
+    @NSManaged public private(set) var users: [User]? // The accessor of the users property.
 }
 
 extension Account {

@@ -28,7 +28,7 @@ extension UserDetail {
     ) throws -> UserDetail {
         let userFetchRequest: NSFetchRequest<User> = User.fetchRequest()
         userFetchRequest.predicate = NSPredicate(format: "id == %@", twitterUser.id)
-        userFetchRequest.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+        userFetchRequest.sortDescriptors = [NSSortDescriptor(key: "modificationDate", ascending: false)]
         userFetchRequest.fetchLimit = 1
         userFetchRequest.relationshipKeyPathsForPrefetching = ["userDetails"]
 

@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreData
+import OrderedCollections
 
 extension Session {
     private nonisolated var persistentContainerNewBackgroundContext: NSManagedObjectContext {
@@ -162,7 +163,7 @@ extension Session {
                 return
             }
 
-            var userDetails = user.sortedUserDetails ?? []
+            var userDetails = OrderedSet(user.sortedUserDetails ?? [])
 
             for (index, userDetail) in userDetails.enumerated() {
                 let previousUserIndex = index - 1
@@ -193,12 +194,12 @@ extension Session {
         }
     }
 
-    public nonisolated func cleansingDataAsset(for userObjectID: NSManagedObjectID, context: NSManagedObjectContext? = nil) async throws {
+    public nonisolated func cleansingDataAsset(for dataAssetObjectID: NSManagedObjectID, context: NSManagedObjectContext? = nil) async throws {
         let context = context ?? persistentContainerNewBackgroundContext
 
         try await context.perform(schedule: .enqueued) {
             guard
-                let dataAsset = try? context.existingObject(with: userObjectID) as? DataAsset,
+                let dataAsset = try? context.existingObject(with: dataAssetObjectID) as? DataAsset,
                 let dataAssetURL = dataAsset.url,
                 let dataAssetDataSHA512Hash = dataAsset.dataSHA512Hash
             else {

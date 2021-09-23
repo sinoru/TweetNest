@@ -1,0 +1,9 @@
+/* Bundle display name */
+"CFBundleDisplayName" = "TweetNest";
+
+/* Bundle name */
+"CFBundleName" = "TweetNest";
+
+/* Copyright (human-readable) */
+"NSHumanReadableCopyright" = "Copyright © 2021 TweetNest LLC. All rights reserved.";
+
